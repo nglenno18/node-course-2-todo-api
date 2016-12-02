@@ -7,13 +7,27 @@ const {app}  = require('./../server');
 //load in our TodoModel for querying database
 const {Todo} = require('./../models/todo');
 
+
+//make an array of dummy todos for the GET request test
+const todos = [{
+  text: 'First Test todo'
+}, {
+  text: 'Second Test todo'
+}];
+
+//now we have to modify beforeEach, using mongoose method to insert docs into collection
 //LifeCycle method
 beforeEach(function(done){
   //will run before every test case and will ONLY move on once we call done
       // this means we can do something asynchronous
   //Call remove and pass an empty object to WIPE OUT all of the todos.
       //add a .then callback and call done when finished
-  Todo.remove({}).then(() => done());
+  //Todo.remove({}).then(() => done());
+  //NEW version:
+    //now we have to modify beforeEach, using mongoose method to insert docs into collection
+    Todo.remove({}).then(() => {
+      Todo.insertMany(todos);   //fill with dummy array
+    }).then(()=> done()); //tack on done call
 });
 
 describe('POST /todos', function(){
@@ -34,7 +48,7 @@ describe('POST /todos', function(){
               return done(error) //returning the result just stops the function
             }
             //make a request to db fetching all the todos and verifying that OUR one todo was indeed added
-            Todo.find().then(function(todos){
+            Todo.find({text}).then(function(todos){
               expect(todos.length).toBe(1); //THIS ASSUMES THAT THE DB IS EMPTY!!!!!!!
                                             //(need to add a testing lifecycle method) up top
               expect(todos[0].text).toBe(text);
@@ -60,7 +74,8 @@ describe('POST /todos', function(){
               return done(error);
             }
             Todo.find().then(function(todos){
-              expect(todos.length).toBe(0);     //since sending in bad data, should not create any todos
+              // expect(todos.length).toBe(0);     //since sending in bad data, should not create any todos
+              expect(todos.length).toBe(2);   //because of our new dummy todos
               done();
             }).catch(function(error){done(error)});
           });
@@ -69,3 +84,19 @@ describe('POST /todos', function(){
 }); //now we need to set up the scripts in package.json to run it
     //test: "mocha server/**/*.test.js".
     //"test-watch": "nodemon --exec "npm test""
+
+
+
+//TESTING GET /todos new describe block
+describe('GET /todos', function(){
+  it('Should get all todos', (done)=> {
+    request(app)
+        .get('/todos')
+        //not sending any data in the test body, BUT we are making assertions on what comes back
+        .expect(200)
+        .expect(function(res){
+          expect(res.body.todos.length).toBe(2);
+        })
+        .end(done); //not ding any fancy on end because not doing anything asynchronously
+  });
+});
