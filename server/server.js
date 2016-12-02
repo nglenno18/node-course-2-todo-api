@@ -13,6 +13,7 @@
 
   //run npm i expect@1.20.2 mocha@3.0.2 nodemon@1.10.2 supertest@2.0.0 --save-dev
   create new folder server/tests to save test files (test file for server.js)
+
 */
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -43,6 +44,21 @@ app.post('/todos', function(request, response){
   });
 });
 
+
+//SECTION 7, Lecture 75 --> List Resources - GET/todos
+// Creating our SECOND routes
+//   -first screen will probably show a user the list of all todos
+app.get('/todos', function(request, response){
+  //get all todos in collection, which we did in the test file (server.test.js) where we used find
+  Todo.find().then(function(todos){
+    //send all the infor back
+    // response.send(todos); //cvould pass back the array like this, but cann add on another custom status code or property
+    //instead, send back an object to open flexibility
+    response.send({todos});
+  }, function(error){
+    response.status(400).send(error);
+  });
+});   //IN POSTMAN: start a collection of routes that we will use over again -->save as GET/todos
 
 app.listen(3000, function(){
   console.log('Started on port 3000');
