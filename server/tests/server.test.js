@@ -1,5 +1,6 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 //add module.exports = {app}; to server.js so you can load it
 //load in serv.js for access to express app
@@ -10,8 +11,10 @@ const {Todo} = require('./../models/todo');
 
 //make an array of dummy todos for the GET request test
 const todos = [{
+  _id: new ObjectID(),
   text: 'First Test todo'
 }, {
+  _id: new ObjectID(),
   text: 'Second Test todo'
 }];
 
@@ -98,5 +101,45 @@ describe('GET /todos', function(){
           expect(res.body.todos.length).toBe(2);
         })
         .end(done); //not ding any fancy on end because not doing anything asynchronously
+  });
+});
+
+//TESTING GET /todos/:id
+//load in object id of mongodb so that we can add a generated object id property in the dummy array
+describe('GET /todos/:id', function(){
+  it('Should get the specified Todo doc', function(done){ //done = asynchronous
+    //create supertest request
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+      .expect(function(response){   //verify that body that comes back matches dummy up above
+        //expect the response body to have a todo property that we send back from server.js
+        expect(response.body.todo.text).toBe(todos[0].text);
+      })
+      .end(done);
+  });
+
+  it('Should return 404 if todo not found, but ID was VALID', function(done){
+    //CHALLENGE:
+      //make a request using a REAL ObjectID, calling to hex.
+      var newID = new ObjectID().toHexString();
+    request(app)
+      .get(`/todos/${newID}`)
+      .expect(404)
+      .expect(function(response){
+        expect(response.text).toBe('ID MISSING: Valid Id not found!');
+        console.log('       ', response.text);
+      })
+      .end(done);
+  });
+
+  it('Should return 404 for non-object IDs, NOT VALID', function(done){
+    request(app)
+      .get(`/todos/123`)
+      .expect(404)
+      .expect(function(error){
+        console.log('       ', error.text);
+      })
+      .end(done);
   });
 });

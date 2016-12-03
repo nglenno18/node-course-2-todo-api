@@ -49,10 +49,10 @@ app.get('/todos/:id', function(request, response){
   //CHALLENGE 78
   //Validate id using isValid
     //error is 404 --> send back an empty body
-    if(!ObjectID.isValid(id)){
-      console.log('ID NOT VALID!');
-      console.log('');
-    }
+    // if(!ObjectID.isValid(id)){
+    //   console.log('ID NOT VALID!');
+    //   console.log('');
+    // }
     //
   //Query the DB using findById()
     //success
@@ -63,7 +63,7 @@ app.get('/todos/:id', function(request, response){
       Todo.findById(id).then(function(todo){
         if(!todo){                        //Weeds out VALID, but MISSING id
           console.log('');
-          response.send({todo});
+          //response.send({todo});
           return response.status(404).send('ID MISSING: Valid Id not found!');
         }
         console.log('');
@@ -72,10 +72,10 @@ app.get('/todos/:id', function(request, response){
         response.send({todo});
       })
         .catch(function(error){
-          console.log('ID NOT VALID', id);
-          console.log('        ', error.message);
+          //console.log('ID NOT VALID', id);
+          console.log('       ', error.message);
           console.log('');
-          response.status(404).send(error);
+          return response.status(404).send('ID NOT VALID');
         });
 });
 
