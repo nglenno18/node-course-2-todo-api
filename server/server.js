@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
 
 
-var {mongoose} = require('./db/mongoose.js');  //CAN leave off the .js ext
+var {mongoose} = require('./db/mongoose');  //CAN leave off the .js ext
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
@@ -71,7 +71,7 @@ app.listen(port, function(){
       //heroku CREATE
       //heroku addons:create mongolab:sandbox //configures mlab with heroku app
       //heroku config (gives us the URI var we need)
-            // URI is on process.env
+            // URI is on process.env  --> check in monoose.js call to connect
 
 });
 
