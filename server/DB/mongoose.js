@@ -1,5 +1,4 @@
 //DEPLOY APP TO HEROKU --> will need to set up a REAL mongodb database
-
 //Take mongoose DB Configuration code from server2.js
 
 var mongoose = require('mongoose');  //require from mongoose library
