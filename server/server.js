@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
 
 
-var {mongoose} = require('./db/mongoose');  //CAN leave off the .js ext
+var {mongoose} = require('./DB/mongoose');  //CAN leave off the .js ext
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
