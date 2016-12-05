@@ -2,7 +2,7 @@
 //dont have to load in mongoose.js file we created, we can load in the plain ol library
 var mongoose = require('mongoose');
 
-var User = mongoose.model('User', {
+var User = mongoose.model('Users', {
   name: {
     type: String,
     minLength: 3,
